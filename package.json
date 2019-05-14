@@ -1,0 +1,22 @@
+{
+  "name": "liri",
+  "version": "1.0.0",
+  "description": "liri app",
+  "main": "main.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaanderson1/liri-node-app.git"
+  },
+  "keywords": [
+    "liri"
+  ],
+  "author": "Allison Anderson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aaanderson1/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/aaanderson1/liri-node-app#readme"
+}
