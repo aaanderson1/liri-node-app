@@ -3,6 +3,8 @@ require("dotenv").config();
 var Spotify = require("node-spotify-api");
 var keys = require("./keys.js");
 var spotify = new Spotify(keys.spotify);
+var request = require('request');
+var moment = require("moment");
 
 const logInfo = (info) => {
     console.log('\x1b[33m%s\x1b[0m', "Info: ", info);
@@ -16,11 +18,33 @@ const print = (str) => {
     console.log('\x1b[36m%s\x1b[0m', str);
 };
 
+const printConcert = (venue) => {
+    print("------------------------------------------");
+    print(`Venue Name: ${venue.venue.name}`);
+    print(`Venue Location: ${venue.venue.city}, ${venue.venue.region} ${venue.venue.country}`);
+    print(`Event Date: ${moment(venue.datetime).format("MM/DD/YYYY")}`);
+};
+
 const handleConcert = (searchTerm) => {
     logInfo(`Handling concert with "${searchTerm}"`);
+    const url = `https://rest.bandsintown.com/artists/${searchTerm}/events?app_id=codingbootcamp`;
+
+    request(url, (err, response, body) => {
+        if (err) {
+            logError(err);
+            return;
+        }
+        if (!err && response.statusCode == 200) {
+            const venues = JSON.parse(body);
+            for (const venue of venues) {
+                printConcert(venue);
+            }
+        }
+    });
 };
 
 const printSpotify = (song) => {
+    print("------------------------------------------");
     print(`Artist(s): ${song.artists[0].name}`);
     print(`Song: ${song.name}`);
     print(`Preview: ${song.external_urls.spotify}`);
@@ -37,8 +61,9 @@ const handleSpotify = (searchTerm) => {
             logError(err);
             return;
         }
-
-        printSpotify(data.tracks.items[0]);
+        for (const song of data.tracks.items) {
+            printSpotify(song);
+        }
     });
 };
 
@@ -65,6 +90,7 @@ const handleCommand = (command, searchTerm) => {
     } else {
         logError(`Command: ${command} not available.`);
     }
+    ``
 }
 
 const parseCommand = (argv) => {
