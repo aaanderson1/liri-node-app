@@ -30,7 +30,7 @@ LIRI is a Language Interpretation and Recognition Interface. LIRI is a command l
     
     See screenshot:
 
-    ![Results](/screenshots/concert-this.PNG)
+    ![Results](/screenshots/concert-this.png)
 
     **Example 2**: Run the `spotify-this-song` command
     
@@ -40,7 +40,7 @@ LIRI is a Language Interpretation and Recognition Interface. LIRI is a command l
     
     See screenshot:
 
-    ![Results](/screenshots/spotify-this-song.PNG)
+    ![Results](/screenshots/spotify-this-song.png)
 
     **Example 3**: Run the `movie-this` command
     
@@ -50,7 +50,7 @@ LIRI is a Language Interpretation and Recognition Interface. LIRI is a command l
     
     See screenshot:
 
-    ![Results](/screenshots/movie-this.PNG)
+    ![Results](/screenshots/movie-this.png)
 
 
     **Example 4**: Run the `do-what-it-says` command
@@ -61,5 +61,5 @@ LIRI is a Language Interpretation and Recognition Interface. LIRI is a command l
     
     See screenshots:
 
-    ![Results](/screenshots/do-what-it-says1.PNG)
-    ![Results](/screenshots/do-what-it-says2.PNG)
+    ![Results](/screenshots/do-what-it-says1.png)
+    ![Results](/screenshots/do-what-it-says2.png)
