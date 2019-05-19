@@ -3,8 +3,9 @@ require("dotenv").config();
 var Spotify = require("node-spotify-api");
 var keys = require("./keys.js");
 var spotify = new Spotify(keys.spotify);
-var request = require('request');
+var axios = require('axios');
 var moment = require("moment");
+var fs = require("fs");
 
 const logInfo = (info) => {
     console.log('\x1b[33m%s\x1b[0m', "Info: ", info);
@@ -29,16 +30,17 @@ const handleConcert = (searchTerm) => {
     logInfo(`Handling concert with "${searchTerm}"`);
     const url = `https://rest.bandsintown.com/artists/${searchTerm}/events?app_id=codingbootcamp`;
 
-    request(url, (err, response, body) => {
-        if (err) {
-            logError(err);
-            return;
-        }
-        if (!err && response.statusCode == 200) {
-            const venues = JSON.parse(body);
+    axios.get(url).then((response) => {
+        if (response.status == 200) {
+            const venues = response.data;
             for (const venue of venues) {
                 printConcert(venue);
             }
+        }
+    }).catch((err) => {
+        if (err) {
+            logError(err);
+            return;
         }
     });
 };
@@ -67,14 +69,53 @@ const handleSpotify = (searchTerm) => {
     });
 };
 
-const handleMovie = (searchTerm) => {
-    logInfo(`Handling movie with "${searchTerm}"`);
-
+const printomdb = (movie) => {
+    print("------------------------------------------");
+    print(`Title: ${movie.Title}`);
+    print(`Year: ${movie.Year}`);
+    print(`IMDB Rating: ${movie.imdbRating}`);
+    for (const rating of movie.Ratings) {
+        if (rating.Source === "Rotten Tomatoes") {
+            print(`Rotten Tomatoes Rating: ${rating.Value}`);
+            break;
+        }
+    }
+    print(`Country: ${movie.Country}`);
+    print(`Language: ${movie.Language}`);
+    print(`Plot: ${movie.Plot}`);
+    print(`Actors: ${movie.Actors}`);
 };
 
-const handleDoIt = (searchTerm) => {
-    logInfo(`Handling do it with "${searchTerm}"`);
+const handleMovie = (searchTerm) => {
+    if (!searchTerm) {
+        print("If you haven't watched \"Mr. Nobody,\" then you should: http://www.imdb.com/title/tt0485947/");
+        print("It's on Netflix!");
+        return;
+    }
+    logInfo(`Handling movie with "${searchTerm}"`);
+    const url = `http://www.omdbapi.com/?t=${searchTerm.replace(" ", "+")}&apikey=${keys.OMDB.id}`;
 
+    axios.get(url).then((response) => {
+        if (response.status == 200) {
+            printomdb(response.data);
+        }
+    }).catch((err) => {
+        if (err) {
+            logError(err);
+            return;
+        }
+    });
+};
+
+const handleDoIt = () => {
+    logInfo("Handling do it");
+    fs.readFile('random.txt', (err, data) => {
+        const lines = data.toString().split(/\r?\n/);
+        const randomInt = Math.floor(Math.random()*lines.length);
+        const chosenLine = lines[randomInt];
+        const commandSearchTerm = chosenLine.split(","); 
+        handleCommand(commandSearchTerm[0], commandSearchTerm[1].replace(/"/g,""));
+    });
 };
 // node liri.js movie-this '<movie name here>'
 const commands = {
@@ -90,8 +131,7 @@ const handleCommand = (command, searchTerm) => {
     } else {
         logError(`Command: ${command} not available.`);
     }
-    ``
-}
+};
 
 const parseCommand = (argv) => {
     const command = argv[0];
@@ -108,10 +148,7 @@ const main = (argv) => {
         logError("No command provided");
         return;
     }
-    if (argv.length < 2) {
-        logError("No search term provided");
-        return;
-    }
+
     const input = parseCommand(argv);
     handleCommand(input.command, input.searchTerm);
 };
